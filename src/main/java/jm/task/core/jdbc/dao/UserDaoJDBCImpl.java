@@ -16,7 +16,7 @@ import java.sql.SQLException;
 public class UserDaoJDBCImpl implements UserDao {
     private static final String JDBC_URL = "jdbc:mysql://localhost:3306/my_db";
     private static final String JDBC_USER = "root";
-    private static final String JDBC_PASSWORD = "1243012430Aa";
+    private static final String JDBC_PASSWORD = "12430";
 
     private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS users " +
             "(id BIGINT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(50), lastName VARCHAR(50), age TINYINT)";

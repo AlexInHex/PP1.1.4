@@ -2,6 +2,7 @@ package jm.task.core.jdbc;
 
 import jm.task.core.jdbc.dao.UserDao;
 import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
+import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
 public class Main {
@@ -11,10 +12,17 @@ public class Main {
 
         userDao.createUsersTable();
 
-        userDao.saveUser("Иван", "Иванов", (byte) 25);
-        userDao.saveUser("Мария", "Петрова", (byte) 30);
-        userDao.saveUser("Алексей", "Сидоров", (byte) 35);
-        userDao.saveUser("Екатерина", "Кузнецова", (byte) 28);
+        User[] users = {
+                new User("Иван", "Иванов", (byte) 25),
+                new User("Мария", "Петрова", (byte) 30),
+                new User("Алексей", "Сидоров", (byte) 35),
+                new User("Екатерина", "Карпук", (byte) 28)
+        };
+
+        for (User user : users) {
+            userDao.saveUser(user.getName(), user.getLastName(), user.getAge());
+            System.out.println("User с именем " + user.getName() + " добавлен в базу данных");
+        }
 
         userDao.removeUserById(1);
         userDao.getAllUsers();

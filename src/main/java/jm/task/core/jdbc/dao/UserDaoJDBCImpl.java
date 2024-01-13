@@ -1,6 +1,7 @@
 package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
+import jm.task.core.jdbc.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,67 +27,61 @@ public class UserDaoJDBCImpl implements UserDao {
     private static final String GET_ALL_USERS_SQL = "SELECT * FROM users";
     private static final String CLEAN_TABLE_SQL = "DELETE FROM users";
 
+    private Connection connection;
+
 
     public UserDaoJDBCImpl() {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        this.connection = Util.getConnection();
     }
 
+    @Override
     public void createUsersTable() {
-        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-             Statement statement = connection.createStatement()) {
-
+        try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(CREATE_TABLE_SQL);
-
         } catch (SQLException e) {
             e.printStackTrace();
+            rollbackTransaction();
         }
     }
 
+    @Override
     public void dropUsersTable() {
-        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-             Statement statement = connection.createStatement()) {
-
+        try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(DROP_TABLE_SQL);
-
         } catch (SQLException e) {
             e.printStackTrace();
+            rollbackTransaction();
         }
     }
 
+    @Override
     public void saveUser(String name, String lastName, byte age) {
-        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_USER_SQL)) {
-
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SAVE_USER_SQL)) {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
             preparedStatement.executeUpdate();
-
         } catch (SQLException e) {
             e.printStackTrace();
+            rollbackTransaction();
         }
     }
 
+    @Override
     public void removeUserById(long id) {
-        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-             PreparedStatement preparedStatement = connection.prepareStatement(REMOVE_USER_SQL)) {
-
+        try (PreparedStatement preparedStatement = connection.prepareStatement(REMOVE_USER_SQL)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
-
         } catch (SQLException e) {
             e.printStackTrace();
+            rollbackTransaction();
         }
     }
 
+    @Override
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-             Statement statement = connection.createStatement();
+        try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(GET_ALL_USERS_SQL)) {
 
             while (resultSet.next()) {
@@ -98,16 +93,26 @@ public class UserDaoJDBCImpl implements UserDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            rollbackTransaction();
         }
         return users;
     }
 
+    @Override
     public void cleanUsersTable() {
-        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-             Statement statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(CLEAN_TABLE_SQL);
         } catch (SQLException e) {
             e.printStackTrace();
+            rollbackTransaction();
+        }
+    }
+
+    private void rollbackTransaction() {
+        try {
+            connection.rollback();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
     }
 }

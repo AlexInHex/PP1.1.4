@@ -1,5 +1,6 @@
 package jm.task.core.jdbc.util;
 
+import jm.task.core.jdbc.model.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
@@ -21,16 +22,25 @@ public class Util {
     static {
         try {
             // Регистрация JDBC драйвера
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            //Class.forName("com.mysql.cj.jdbc.Driver");
 
-            Configuration configuration = new Configuration();
-            configuration.setProperty("hibernate.connection.url", JDBC_URL);
-            configuration.setProperty("hibernate.connection.username", JDBC_USER);
-            configuration.setProperty("hibernate.connection.password", JDBC_PASSWORD);
-            configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
-            configuration.setProperty("hibernate.hbm2ddl.auto", "update");
+//            Configuration configuration = new Configuration();
+//            configuration.setProperty("hibernate.connection.url", JDBC_URL);
+//            configuration.setProperty("hibernate.connection.username", JDBC_USER);
+//            configuration.setProperty("hibernate.connection.password", JDBC_PASSWORD);
+//            configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+//            configuration.setProperty("hibernate.hbm2ddl.auto", "update");
+//
+//            sessionFactory = configuration.buildSessionFactory();
 
-            sessionFactory = configuration.buildSessionFactory();
+            sessionFactory = new Configuration()
+                    .setProperty("hibernate.connection.url", JDBC_URL)
+                    .setProperty("hibernate.connection.username", JDBC_USER)
+                    .setProperty("hibernate.connection.password", JDBC_PASSWORD)
+                    .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
+                    .setProperty("hibernate.hbm2ddl.auto", "update")
+                    .addAnnotatedClass(User.class)
+                    .buildSessionFactory();
 
 
         } catch (Exception e) {
@@ -38,28 +48,34 @@ public class Util {
         }
     }
 
-    public static Connection getConnection() {
-        Connection connection = null;
-        try {
-            // Установка соединения
-            connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return connection;
-    }
-
-    public static void closeConnection(Connection connection) {
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    public static Connection getConnection() {
+//        Connection connection = null;
+//        try {
+//            // Установка соединения
+//            connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return connection;
+//    }
+//
+//    public static void closeConnection(Connection connection) {
+//        if (connection != null) {
+//            try {
+//                connection.close();
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
     public static SessionFactory getSessionFactory() {
         return sessionFactory;
+    }
+
+    public static void closeSessionFactory() {
+        if (sessionFactory != null) {
+            sessionFactory.close();
+        }
     }
 }

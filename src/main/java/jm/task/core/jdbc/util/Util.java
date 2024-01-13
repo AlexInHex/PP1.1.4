@@ -12,6 +12,8 @@ public class Util {
     private static final String JDBC_USER = "root";
     private static final String JDBC_PASSWORD = "12430";
 
+    private static final SessionFactory sessionFactory;
+
     private Util() {
         throw new IllegalStateException("Util");
     }
@@ -20,6 +22,16 @@ public class Util {
         try {
             // Регистрация JDBC драйвера
             Class.forName("com.mysql.cj.jdbc.Driver");
+
+            Configuration configuration = new Configuration();
+            configuration.setProperty("hibernate.connection.url", JDBC_URL);
+            configuration.setProperty("hibernate.connection.username", JDBC_USER);
+            configuration.setProperty("hibernate.connection.password", JDBC_PASSWORD);
+            configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+            configuration.setProperty("hibernate.hbm2ddl.auto", "update");
+
+            sessionFactory = configuration.buildSessionFactory();
+
 
         } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
@@ -46,5 +58,8 @@ public class Util {
             }
         }
     }
-    
+
+    public static SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
 }

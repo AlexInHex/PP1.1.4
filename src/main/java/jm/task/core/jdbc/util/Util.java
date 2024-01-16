@@ -24,15 +24,6 @@ public class Util {
             // Регистрация JDBC драйвера
             //Class.forName("com.mysql.cj.jdbc.Driver");
 
-//            Configuration configuration = new Configuration();
-//            configuration.setProperty("hibernate.connection.url", JDBC_URL);
-//            configuration.setProperty("hibernate.connection.username", JDBC_USER);
-//            configuration.setProperty("hibernate.connection.password", JDBC_PASSWORD);
-//            configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
-//            configuration.setProperty("hibernate.hbm2ddl.auto", "update");
-//
-//            sessionFactory = configuration.buildSessionFactory();
-
             sessionFactory = new Configuration()
                     .setProperty("hibernate.connection.url", JDBC_URL)
                     .setProperty("hibernate.connection.username", JDBC_USER)

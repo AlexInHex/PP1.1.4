@@ -1,7 +1,11 @@
 package jm.task.core.jdbc.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 
+@Entity
 @Table(name = "users")
 public class User {
     @Id
@@ -16,6 +20,10 @@ public class User {
 
     @Column
     private Byte age;
+
+    public User() {
+        // обьязательный пустой конструктор..
+    }
 
     public User(long id, String name, String lastName, byte age) {
         this.id = id;

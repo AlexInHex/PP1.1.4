@@ -15,9 +15,6 @@ import java.sql.SQLException;
 
 
 public class UserDaoJDBCImpl implements UserDao {
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/my_db";
-    private static final String JDBC_USER = "root";
-    private static final String JDBC_PASSWORD = "12430";
 
     private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS users " +
             "(id BIGINT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(50), lastName VARCHAR(50), age TINYINT)";
@@ -31,7 +28,13 @@ public class UserDaoJDBCImpl implements UserDao {
 
 
     public UserDaoJDBCImpl() {
+
         this.connection = Util.getConnection();
+        try {
+            this.connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -40,7 +43,6 @@ public class UserDaoJDBCImpl implements UserDao {
             statement.executeUpdate(CREATE_TABLE_SQL);
         } catch (SQLException e) {
             e.printStackTrace();
-            rollbackTransaction();
         }
     }
 
@@ -50,7 +52,6 @@ public class UserDaoJDBCImpl implements UserDao {
             statement.executeUpdate(DROP_TABLE_SQL);
         } catch (SQLException e) {
             e.printStackTrace();
-            rollbackTransaction();
         }
     }
 
@@ -61,6 +62,7 @@ public class UserDaoJDBCImpl implements UserDao {
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
             preparedStatement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
             rollbackTransaction();
@@ -72,6 +74,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try (PreparedStatement preparedStatement = connection.prepareStatement(REMOVE_USER_SQL)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
             rollbackTransaction();
@@ -91,6 +94,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 byte age = resultSet.getByte("age");
                 users.add(new User(id, name, lastName, age));
             }
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
             rollbackTransaction();
@@ -104,7 +108,6 @@ public class UserDaoJDBCImpl implements UserDao {
             statement.executeUpdate(CLEAN_TABLE_SQL);
         } catch (SQLException e) {
             e.printStackTrace();
-            rollbackTransaction();
         }
     }
 

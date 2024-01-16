@@ -12,6 +12,8 @@ public class Util {
     private static final String JDBC_USER = "root";
     private static final String JDBC_PASSWORD = "12430";
 
+    private static Connection connection;
+
     private Util() {
         throw new IllegalStateException("Util");
     }
@@ -20,6 +22,7 @@ public class Util {
         try {
             // Регистрация JDBC драйвера
             Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
 
         } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
@@ -27,13 +30,6 @@ public class Util {
     }
 
     public static Connection getConnection() {
-        Connection connection = null;
-        try {
-            // Установка соединения
-            connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         return connection;
     }
 
